@@ -1,277 +1,104 @@
-# NASA Exoplanet Analysis Dashboard
+# DIANA — Hunting Exoplanets with AI Precision
 
-A full-stack application for analyzing exoplanet observations using machine learning. The dashboard allows users to input astronomical data, load pre-existing datasets, and analyze them using trained ML models.
+DIANA is a full-stack web application built for the **NASA Space Apps Challenge** that leverages machine learning to classify exoplanet candidates from NASA mission data. It provides an interactive dashboard where users can analyze observations from the **Kepler**, **K2**, and **TESS** space missions using pre-trained LightGBM classifiers.
 
 ## Features
 
-### Frontend (React + Redux)
-- **Astronomical Data Input**: Form to enter observation parameters with expandable fields
-- **Dataset Management**: Load pre-existing datasets (Kepler, K2, TESS) or upload CSV files
-- **Interactive Dataset Table**: View observations with pagination, click rows for single analysis
-- **Dual Analysis Modes**:
-  - **Single Observation**: Click any row to get detailed classification with feature importance and explanations
-  - **Batch Analysis**: Analyze entire dataset with aggregate statistics and model performance metrics
-- **Results Visualization**: Dynamic display of classification results, confidence scores, and model insights
+- **Single Observation Analysis** — Input astronomical parameters manually and receive a classification with confidence scores, feature importance, and a natural-language explanation.
+- **Batch Dataset Analysis** — Load pre-built NASA mission datasets or upload a custom CSV to classify hundreds of observations at once.
+- **Explainable AI** — Every prediction includes feature attribution, probability distributions, and human-readable reasoning.
+- **Interactive Dashboard** — Visualize results through precision/recall graphs, light-curve plots, and a searchable data table.
+- **Guided Walkthrough** — A step-by-step flow that helps new users choose a model, enter data, or select a dataset before reaching the dashboard.
 
-### Backend (FastAPI + ML)
-- **RESTful API**: FastAPI endpoints for dataset loading and analysis
-- **ML Integration**: Trained models for exoplanet classification
-- **Feature Importance**: SHAP-like explanations for individual predictions
-- **Model Metrics**: Confidence distributions, accuracy stats, and performance tracking
+## Tech Stack
+
+| Layer     | Technology                                              |
+| --------- | ------------------------------------------------------- |
+| Frontend  | React 19, Vite 7, React Router, Redux Toolkit, Recharts |
+| Backend   | Python, FastAPI, Uvicorn                                |
+| ML / Data | LightGBM, scikit-learn, pandas, NumPy, joblib           |
+| Datasets  | NASA Kepler, K2, and TESS mission archives              |
 
 ## Project Structure
 
 ```
-NASA/
-├── back/                           # Backend (FastAPI)
-│   ├── main.py                     # API endpoints
-│   ├── models/                     # Trained ML models
-│   │   ├── modelo_kepler_exoplanetas.pkl
-│   │   └── modelo_tess_exoplanetas.pkl
+├── backend/
+│   ├── main.py                  # FastAPI application & endpoints
+│   ├── requirements.txt         # Python dependencies
+│   ├── models/                  # Pre-trained .pkl model files
+│   ├── resources/               # Raw + cleaned CSV datasets
+│   │   └── clean/               # Preprocessed datasets ready for analysis
 │   ├── services/
-│   │   ├── analisis.py            # ML analysis functions
-│   │   └── datasets.py            # Dataset management
-│   ├── resources/
-│   │   └── clean/                 # Pre-cleaned datasets
-│   │       ├── kepler_clean.csv
-│   │       ├── k2_clean.csv
-│   │       └── tess_clean.csv
-│   └── requirements.txt
-│
-└── front-2/                        # Frontend (React)
-    ├── src/
-    │   ├── pages/
-    │   │   └── dashboard/
-    │   │       ├── index.jsx       # Main dashboard
-    │   │       ├── store.js        # Redux store
-    │   │       ├── componentes/
-    │   │       │   ├── AstronomicalDataInput.jsx
-    │   │       │   ├── DatasetTable.jsx
-    │   │       │   ├── DatasetActionButtons.jsx
-    │   │       │   └── Results.jsx
-    │   │       └── styles/
-    │   │           └── formStyles.css
-    │   └── App.jsx
-    └── package.json
+│   │   ├── analisis.py          # ML inference, feature importance, explanations
+│   │   └── datasets.py          # Dataset loading & metadata
+│   └── test.py                  # Model loading smoke test
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx              # Router & Redux provider
+│   │   ├── components/          # Shared UI components (NavBar, cards)
+│   │   ├── pages/
+│   │   │   ├── home/            # Landing page with animated star field
+│   │   │   ├── explore/         # Browse available NASA datasets
+│   │   │   ├── walkthrough/     # Guided setup (model selection, data entry)
+│   │   │   └── dashboard/       # Main analysis dashboard
+│   │   │       ├── store.js     # Redux state (models, forms, results)
+│   │   │       └── componentes/ # Dashboard-specific components
+│   │   └── assets/              # Global styles
+│   └── public/imgs/             # Mission imagery (Kepler, K2, TESS)
+└── README.md
 ```
-
-## Installation & Setup
-
-### Backend Setup
-
-1. Navigate to the backend directory:
-```bash
-cd back
-```
-
-2. Create a virtual environment (recommended):
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Run the FastAPI server:
-```bash
-uvicorn main:app --reload --port 8000
-```
-
-The API will be available at `http://localhost:8000`
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-```bash
-cd front-2
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Run the development server:
-```bash
-npm run dev
-```
-
-The application will be available at `http://localhost:5173`
-
-## Usage
-
-### Manual Entry Workflow
-
-1. **Enter Observation Data**: Fill in the astronomical parameters in the input form
-   - First 10 fields are visible by default
-   - Click "Show More Fields" to see all 25 parameters
-2. **Add to Dataset**: Click "Add to Dataset" to add the observation to your working dataset
-3. **Repeat**: Add multiple observations as needed
-4. **Analyze**:
-   - Click "Analyze Dataset" button to analyze all observations at once
-   - OR click on any row to analyze just that observation
-
-### Load Dataset Workflow
-
-1. **Choose Dataset**: Click "Choose Dataset" and select Kepler, K2, or TESS
-2. **View Data**: The first 10 rows will be loaded into the table
-3. **Analyze**:
-   - Click "Analyze Dataset" for batch analysis
-   - OR click on any row for single observation analysis
-
-### CSV Upload Workflow
-
-1. **Import CSV**: Click "Import CSV" and select your CSV file
-2. **Automatic Parsing**: The first 10 rows will be parsed and loaded
-3. **Analyze**: Use either batch or single observation analysis
 
 ## API Endpoints
 
-### GET `/datasets`
-Get available datasets metadata
+| Method | Route                  | Description                                             |
+| ------ | ---------------------- | ------------------------------------------------------- |
+| `GET`  | `/`                    | Health check                                            |
+| `GET`  | `/datasets`            | List available dataset metadata                         |
+| `GET`  | `/select-dataset/{id}` | Load a preprocessed dataset (kepler, tess)              |
+| `POST` | `/analyze-dataset`     | Classify a full dataset with the selected model         |
+| `POST` | `/analyze-observation` | Classify a single observation with detailed explanation |
+| `POST` | `/upload-csv`          | Upload a custom CSV file                                |
 
-### GET `/select-dataset/{datasetId}`
-Load a pre-existing dataset (kepler, k2, or tess)
+## Getting Started
 
-**Response:**
-```json
-{
-  "status": 200,
-  "data": [...]
-}
-```
+### Prerequisites
 
-### POST `/analyze-dataset`
-Analyze multiple observations
-
-**Request:**
-```json
-[
-  { "pl_radeerr1": 0.0, "st_rad": 1.0, ... },
-  { "pl_radeerr1": 0.0, "st_rad": 1.0, ... }
-]
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "analyzed_data": [...],
-  "summary": {
-    "total": 10,
-    "planets": 2,
-    "candidates": 3,
-    "ambiguous": 2,
-    "non_planets": 3
-  },
-  "model_metrics": {
-    "average_confidence": 0.85,
-    "low_confidence_count": 1,
-    "high_confidence_count": 6,
-    "model_version": "1.0"
-  }
-}
-```
-
-### POST `/analyze-observation`
-Analyze a single observation with detailed explanation
-
-**Request:**
-```json
-{
-  "pl_radeerr1": 0.0,
-  "st_rad": 1.0,
-  ...
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "classification": 2,
-  "confidence": 0.85,
-  "probabilities": [0.05, 0.10, 0.85, 0.00],
-  "feature_importance": [
-    { "name": "Transit Depth", "importance": 0.25 },
-    ...
-  ],
-  "explanation": "This observation has been classified as a planet candidate with 85% confidence...",
-  "details": {}
-}
-```
-
-## Classification Labels
-
-- **0**: Non-Planet
-- **1**: Ambiguous
-- **2**: Candidate
-- **3**: Confirmed Planet
-
-## Technologies Used
-
-### Frontend
-- React 18
-- Redux Toolkit (state management)
-- React Router (navigation)
-- Vite (build tool)
+- **Python 3.10+**
+- **Node.js 18+**
 
 ### Backend
-- FastAPI (web framework)
-- NumPy & Pandas (data processing)
-- Scikit-learn (ML models)
-- Uvicorn (ASGI server)
 
-## Development Notes
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate   # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
 
-### Redux Store Structure
+The API will be available at `http://localhost:8000`. Visit `/docs` for the interactive Swagger documentation.
 
-The store uses a clean separation between field metadata and values:
-- `formFields`: Array of field definitions (labels, steps, validation)
-- `formValues`: Object with actual form values
-- `dataset`: Array of observation objects
-- `analysisResult`: Results from backend (single or batch)
-- `analysisType`: "single" or "batch" to determine display mode
+### Frontend
 
-### Model Integration
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-The backend uses pickle-serialized ML models. The analysis functions include:
-- Preprocessing: Convert observation dict to numpy array
-- Prediction: Run model inference
-- Feature Importance: Calculate which features influenced the decision
-- Explanation Generation: Natural language description of the classification
+The app will be available at `http://localhost:5173`.
 
-### Error Handling
+## ML Models
 
-All components include comprehensive error handling:
-- Form validation before adding to dataset
-- API error messages displayed to user
-- Fallback mock data if model fails to load
-- Clear error states in Redux
+DIANA ships with pre-trained **LightGBM** classifiers for both the TESS and Kepler pipelines. Each model was trained on cleaned mission data using TSFRESH feature engineering.
 
-## Future Enhancements
+| Model  | Features                                                | Recall | AUC  |
+| ------ | ------------------------------------------------------- | ------ | ---- |
+| TESS   | 24 (transit depth, orbital period, star radius, etc.)   | 96%    | 94.8 |
+| Kepler | 24 (KOI score, transit depth, number of transits, etc.) | 96%    | 94.8 |
 
-- [ ] Real-time analysis as observations are added
-- [ ] Advanced data visualization (charts, graphs)
-- [ ] Model comparison (select different models)
-- [ ] Batch upload (analyze >10 rows at once)
-- [ ] Export results as PDF reports
-- [ ] Historical analysis sessions
-- [ ] User authentication and saved datasets
-- [ ] Advanced filtering and sorting
-- [ ] SHAP integration for better explanations
+Models are stored as serialized `.pkl` files in `backend/models/` and loaded on first request.
 
-## Contributing
+## Developed by
 
-This project was built following the comprehensive specification in `front-2/src/pages/dashboard/prompt_2.md`.
-
-## License
-
-MIT License
-
-## Contact
-
-For questions or issues, please open an issue on the repository.
+Team STARWARE
